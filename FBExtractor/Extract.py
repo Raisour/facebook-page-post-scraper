@@ -92,7 +92,9 @@ def processFacebookPageFeedStatus(status):
     status_published = status_published + \
         datetime.timedelta(hours=-5)  # EST
     status_published = status_published.strftime(
-        '%Y-%m-%d %H:%M:%S') 
+        '%Y-%m-%d %H:%M:%S')
+    date_published = status_published.split(" ")[0]
+    hour_published = status_published.split(" ")[1]
 
     num_reactions = 0 if 'reactions' not in status else \
         status['reactions']['summary']['total_count']
@@ -101,14 +103,14 @@ def processFacebookPageFeedStatus(status):
     num_shares = 0 if 'shares' not in status else status['shares']['count']
 
     return (status_id, status_message, link_name, status_type, status_link,
-            status_published, num_reactions, num_comments, num_shares)
+            date_published, hour_published, num_reactions, num_comments, num_shares)
 
 
 def scrapeFacebookPageFeedStatus(page_id, access_token, since_date, until_date, time):
     with open('{}_status.csv'.format(page_id), 'w', newline='') as file:
         w = csv.writer(file,delimiter=';')
         w.writerow(["status_id", "status_message", "link_name", "status_type",
-                    "status_link", "status_published", "num_reactions",
+                    "status_link", "date_published", "hour_published", "num_reactions",
                     "num_comments", "num_shares", "num_likes", "num_loves",
                     "num_wows", "num_hahas", "num_sads", "num_angrys",
                     "num_special"])
@@ -142,7 +144,7 @@ def scrapeFacebookPageFeedStatus(page_id, access_token, since_date, until_date, 
                     status_data = processFacebookPageFeedStatus(status)
                     reactions_data = reactions[status_data[0]]
 
-                    num_special = status_data[6] - sum(reactions_data)
+                    num_special = status_data[7] - sum(reactions_data)
                     w.writerow(status_data + reactions_data + (num_special,))
 
                 num_processed += 1
