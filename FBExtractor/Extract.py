@@ -104,8 +104,7 @@ def processFacebookPageFeedStatus(status):
             status_published, num_reactions, num_comments, num_shares)
 
 
-def scrapeFacebookPageFeedStatus(page_id, access_token, since_date, until_date):
-    threading.Timer(float(tempo), scrapeFacebookPageFeedStatus, [page_id, access_token, since_date, until_date ]).start()
+def scrapeFacebookPageFeedStatus(page_id, access_token, since_date, until_date, time):
     with open('{}_status.csv'.format(page_id), 'w') as file:
         w = csv.writer(file,delimiter=';')
         w.writerow(["status_id", "status_message", "link_name", "status_type",
@@ -157,14 +156,17 @@ def scrapeFacebookPageFeedStatus(page_id, access_token, since_date, until_date):
 
         print("\nExportado com sucesso!\n{} Posts processados em {}".format(
               num_processed, datetime.datetime.now() - scrape_starttime))
+        if time != 0:
+        	threading.Timer(time, scrapeFacebookPageFeedStatus, [page_id, access_token, since_date, until_date, time ]).start()
 
 
 if __name__ == '__main__':
     page_id = input("Digite o id da página: ")
-    tempo = input("Exportação será feita a cada quantos segundos: ")
-    if float(tempo) <= 30.0:
+    tempo = input("Exportação será feita a cada quantos segundos: (0 para não repetir)")
+    time = float(tempo)
+    if time <= 30.0 and time != 0:
         print("Deve-se exportar no mínimo a cada 30 segundos")
         quit()
     else:
-        scrapeFacebookPageFeedStatus(page_id, access_token, since_date, until_date)
+        scrapeFacebookPageFeedStatus(page_id, access_token, since_date, until_date, time)
     
