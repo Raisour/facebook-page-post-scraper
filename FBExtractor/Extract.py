@@ -105,13 +105,14 @@ def processFacebookPageFeedStatus(status):
 
 
 def scrapeFacebookPageFeedStatus(page_id, access_token, since_date, until_date, time):
-    with open('{}_status.csv'.format(page_id), 'w') as file:
+    with open('{}_status.csv'.format(page_id), 'w', newline='') as file:
         w = csv.writer(file,delimiter=';')
         w.writerow(["status_id", "status_message", "link_name", "status_type",
                     "status_link", "status_published", "num_reactions",
                     "num_comments", "num_shares", "num_likes", "num_loves",
                     "num_wows", "num_hahas", "num_sads", "num_angrys",
                     "num_special"])
+
 
         has_next_page = True
         num_processed = 0
